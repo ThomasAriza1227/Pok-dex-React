@@ -2,7 +2,6 @@ import { useState } from "react";
 import { buscarPokemon } from "../services/pokeApi";
 import { agregarAlEquipo } from "../services/equipoApi";
 
-
 function Pokedex({ onPokemonAgregado }) {
     const [busqueda, setBusqueda] = useState("");
     const [pokemon, setPokemon] = useState(null);
@@ -20,27 +19,27 @@ function Pokedex({ onPokemonAgregado }) {
     };
 
     const agregarPokemon = async () => {
-    if (!pokemon) {
-        return;
-    }
+        if (!pokemon) {
+            return;
+        }
 
-    const nuevoPokemon = {
-        nombre: pokemon.name,
-        imagen: pokemon.sprites.front_default,
-        nivel: 1,
-        favorito: false
+        const nuevoPokemon = {
+            nombre: pokemon.name,
+            imagen: pokemon.sprites.front_default,
+            nivel: 1,
+            favorito: false
+        };
+
+        try {
+            await agregarAlEquipo(nuevoPokemon);
+            if (onPokemonAgregado) {
+                onPokemonAgregado();
+            }
+            alert(`${pokemon.name} fue agregado al equipo`);
+        } catch (error) {
+            setError(error.message);
+        }
     };
-
-    try {
-        await agregarAlEquipo(nuevoPokemon);
-        onPokemonAgregado();
-        alert(
-            `${pokemon.name} fue agregado al equipo`
-        );
-    } catch (error) {
-        setError(error.message);
-    }
-};
 
     return (
         <section>
@@ -65,12 +64,32 @@ function Pokedex({ onPokemonAgregado }) {
                 <article>
                     <h2>{pokemon.name}</h2>
 
-                        <img src={pokemon.sprites.front_default} alt={pokemon.name}/>
+                    <img
+                        src={pokemon.sprites.front_default}
+                        alt={pokemon.name}
+                    />
 
-                            <p>Altura: {pokemon.height}</p>
-                            <p>Peso: {pokemon.weight}</p>
+                    <p>Altura: {pokemon.height}</p>
+                    <p>Peso: {pokemon.weight}</p>
 
-                            <button onClick={agregarPokemon}> Agregar a mi equipo </button>
+                    <button onClick={agregarPokemon}>
+                        Agregar a mi equipo
+                    </button>
+
+
+                    <button
+    onClick={() => subirNivel(pokemon)}
+>
+    Subir nivel
+</button>
+
+<button
+    onClick={() => cambiarFavorito(pokemon)}
+>
+    {pokemon.favorito
+        ? "Quitar favorito"
+        : "Marcar favorito"}
+</button>
                 </article>
             )}
         </section>
@@ -78,4 +97,3 @@ function Pokedex({ onPokemonAgregado }) {
 }
 
 export default Pokedex;
-

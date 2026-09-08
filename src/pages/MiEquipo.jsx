@@ -1,48 +1,70 @@
 import { useEffect, useState } from "react";
 import { obtenerEquipo } from "../services/equipoApi";
+import { actualizarPokemon } from "../services/equipoApi";
+import { eliminarPokemon } from "../services/equipoApi";
 
 function MiEquipo({ actualizarEquipo }) {
-    const [equipo, setEquipo] = useState([]);
-    const [error, setError] = useState("");
+  const [equipo, setEquipo] = useState([]);
+  const [error, setError] = useState("");
 
-    useEffect(() => {
-        const cargarEquipo = async () => {
-            try {
-                const datos = await obtenerEquipo();
-                setEquipo(datos);
-            } catch (error) {
-                setError(error.message);
-            }
-        };
+  const cargarEquipo = async () => {
+    try {
+      const datos = await obtenerEquipo();
+      setEquipo(datos);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  useEffect(() => {
+    cargarEquipo();
+  }, [actualizarEquipo]);
 
-        cargarEquipo();
-    }, [actualizarEquipo]);
+  const subirNivel = async (pokemon) => {
+    await actualizarPokemon(pokemon.id, { nivel: pokemon.nivel + 1 });
 
-    return (
-        <section>
-            <h2>Mi Equipo Pokémon</h2>
+    cargarEquipo();
+  };
 
-            {error && <p>{error}</p>}
+  const cambiarFavorito = async (pokemon) => {
+    await actualizarPokemon(pokemon.id, { favorito: !pokemon.favorito });
 
-            {equipo.length === 0 ? (
-                <p>
-                    Todavía no tienes Pokémon en tu equipo.
-                </p>
-            ) : (
-                equipo.map((pokemon) => (
-                    <article key={pokemon.id}>
-                        <h3>{pokemon.nombre}</h3>
-                        <img
-                            src={pokemon.imagen}
-                            alt={pokemon.nombre}
-                        />
-                        <p>Nivel: {pokemon.nivel}</p>
-                    </article>
-                ))
-            )}
-        </section>
-    );
+    cargarEquipo();
+  };
+
+  const liberarPokemon = async (id) => {
+    await eliminarPokemon(id);
+    cargarEquipo();
+  };
+
+  return (
+    <section>
+      <h2>Mi Equipo Pokémon</h2>
+
+      {error && <p>{error}</p>}
+
+      {equipo.length === 0 ? (
+        <p>Todavía no tienes Pokémon en tu equipo.</p>
+      ) : (
+        equipo.map((pokemon) => (
+          <article key={pokemon.id}>
+            <button onClick={() => subirNivel(pokemon)}>Subir nivel</button>
+
+            <button onClick={() => cambiarFavorito(pokemon)}>
+              {pokemon.favorito ? "Quitar favorito" : "Marcar favorito"}
+            </button>
+
+            <button onClick={() => liberarPokemon(pokemon.id)}>
+              Liberar Pokémon
+            </button>
+
+            <h3>{pokemon.nombre}</h3>
+            <img src={pokemon.imagen} alt={pokemon.nombre} />
+            <p>Nivel: {pokemon.nivel}</p>
+          </article>
+        ))
+      )}
+    </section>
+  );
 }
 
 export default MiEquipo;
-

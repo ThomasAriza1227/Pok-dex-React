@@ -1,3 +1,19 @@
 {
-  "equipo": []
+  "equipo": [
+    {
+      "nombre": "charmeleon",
+      "imagen": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png",
+      "nivel": 17,
+      "favorito": false,
+      "id": "hqJFkISSFgU"
+    },
+    {
+      "nombre": "charmeleon",
+      "imagen": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png",
+      "nivel": 11,
+      "favorito": false,
+      "id": "sagCmcuv234"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
